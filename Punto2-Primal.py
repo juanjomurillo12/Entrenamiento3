@@ -27,7 +27,7 @@ prob += xcu + xcs + xcc + xct >= 55
 prob += xvu + xfu + xcu <= 45
 prob += xvs + xfs + xcs <= 40
 prob += xvc + xfc + xcc <= 45
-prob += xvt + xft + xct <= 45
+prob += xvt + xft + xct <= 40
 
 #solución
 prob.solve(lp.PULP_CBC_CMD(msg=0))
