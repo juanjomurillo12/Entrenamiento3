@@ -59,6 +59,7 @@ values = [i for i in range(0,90)]
 # Crear lista vacía para almacenar el valor de la variable primal
 # -------------------------------------
 primales = []
+df = pd.DataFrame()
 
 # -------------------------------------
 # Proceso iterativo
@@ -66,6 +67,7 @@ primales = []
 for b in values:
     valor = round(evaluate_model(b),0)
     primales.append(valor)
+    df = df._append({"Capacidad de producción de VeggieDrinks": b, "Función Objetivo (Utilidad total)": valor}, ignore_index=True)
 
 # -------------------------------------
 # Graficar el los resultados
@@ -76,3 +78,9 @@ plt.ylabel("Función Objetivo (Utilidad total)")
 plt.title("Valor de la variable primal por cada litro de capacidad de producción de VeggieDrinks")
 
 plt.show()
+
+
+# Guardar los resultados en un archivo excel
+df.to_excel("Resultados_punto3.xlsx", index = False)
+
+
