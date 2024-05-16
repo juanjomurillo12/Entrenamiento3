@@ -38,7 +38,8 @@ prob+= 0.37*x_almendra <= 15.2
 prob+= 0.4*x_coco + 0.47*x_almendra <= 42
 
 # No pasarse de la capacidad de producción
-prob+= 0.75*x_coco + 0.84*x_almendra <= 75
+prob+= 0.75*x_coco + 0.84*x_almendra <= 75-2.349034749
+
 
 # ---------------------
 # Solución del problema
