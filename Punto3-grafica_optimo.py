@@ -4,7 +4,24 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-def evaluate_model(b):
+
+
+# Valor del lado derecho de la restricción R5
+
+b=0
+
+# lista donde se guardarán los resultados de cada iteración
+
+resultados = []
+
+# valor de la variable dual
+
+dual = 1
+
+# Ciclo while que corre el modelo iterativamente
+
+while dual > 0:
+
         # ---------------------
         # Creación del objeto problema en PuLP
         # ---------------------
@@ -28,59 +45,71 @@ def evaluate_model(b):
         # Restricciones
         # -----------------
         # No excederse en la cantidad de tiempo de producción
-        prob+= 3.4*x_coco + 2.6*x_almendra <= 720
+        prob+= 3.4*x_coco + 2.6*x_almendra <= 720, "R1"
 
         # No pasarse de la cantidad de coco disponible
-        prob+= 0.35*x_coco <= 17.8
+        prob+= 0.35*x_coco <= 17.8, "R2"
 
         # No pasarse de la cantidad de almendra disponible
-        prob+= 0.37*x_almendra <= 15.2
+        prob+= 0.37*x_almendra <= 15.2, "R3"
 
         # No pasarse de los litros de agua disponibles
-        prob+= 0.4*x_coco + 0.47*x_almendra <= 42
+        prob+= 0.4*x_coco + 0.47*x_almendra <= 42, "R4"
 
         # No pasarse de la capacidad de producción
-        prob+= 0.75*x_coco + 0.84*x_almendra <= b
+        prob+= x_coco + x_almendra <= b, "R5"
 
-        # ---------------------
-        # Solución del problema
-        # ---------------------
+        # Resolver el problema
         prob.solve(lp.PULP_CBC_CMD(msg=0))
 
-        return prob.objective.value()
+        # Guardar el valor de la función objetivo
+        f_o = lp.value(prob.objective)
+
+        # Guardar el valor de la variable dual
+        dual = prob.constraints["R5"].pi
+
+        # diccionario con los resultados de la iteración
+        resultado = {
+            "Recurso": b,
+            "F.O": f_o,
+            "Dual": dual,
+            "Estado": lp.LpStatus[prob.status]}
+        
+        # Guardar el resultado en la lista de resultados
+        resultados.append(resultado)
+
+        # Aumentar el valor de b en 0.1
+        b += 0.1
 
 
-# -------------------------------------
-# Valores de b a evaluar
-# -------------------------------------
-values = [i for i in range(0,90)]
+    
 
-# -------------------------------------
-# Crear lista vacía para almacenar el valor de la variable primal
-# -------------------------------------
-primales = []
-df = pd.DataFrame()
+    
 
-# -------------------------------------
-# Proceso iterativo
-# -------------------------------------
-for b in values:
-    valor = round(evaluate_model(b),0)
-    primales.append(valor)
-    df = df._append({"Capacidad de producción de VeggieDrinks": b, "Función Objetivo (Utilidad total)": valor}, ignore_index=True)
+# Dar formato de tabla a los resultados con la librería "Pandas"
+# Guardar la tabla en el objeto "df"
+df = pd.DataFrame(resultados)
+# Visualizar cómo luce la tabla
+print(df)
 
-# -------------------------------------
-# Graficar el los resultados
-# -------------------------------------
-plt.scatter(values, primales, color = "pink")
-plt.xlabel("Capacidad de producción de VeggieDrinks")
-plt.ylabel("Función Objetivo (Utilidad total)")
-plt.title("Valor de la variable primal por cada litro de capacidad de producción de VeggieDrinks")
 
+#*-------*-------*
+#Imprimir Gráfica
+#*-------*-------*
+
+#Crear gráfica y sub-gráfica que sobrelapa a la primera y aporta los
+#títulos a los ejes
+fig, gra = plt.subplots()
+
+#Indicamos qué info va en el eje "x" y en el "y"
+gra.plot(df['Recurso'],df['F.O'], color='pink')
+
+#Dar formato a la gráfica
+gra.set(xlabel='Recurso',ylabel='Valor F.O',title='F.O vs Capacidad de Producción')
+plt.grid()
+
+#Mostrar gráfica
 plt.show()
 
-
-# Guardar los resultados en un archivo excel
-df.to_excel("Resultados_punto3.xlsx", index = False)
-
+# %%
 
