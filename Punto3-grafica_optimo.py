@@ -102,10 +102,10 @@ print(df)
 fig, gra = plt.subplots()
 
 #Indicamos qué info va en el eje "x" y en el "y"
-gra.plot(df['Recurso'],df['F.O'], color='pink')
+gra.plot(df['Recurso'],df['F.O'], color='purple')
 
 #Dar formato a la gráfica
-gra.set(xlabel='Recurso',ylabel='Valor F.O',title='F.O vs Capacidad de Producción')
+gra.set(xlabel='Litros destinados a la capacidad de producción',ylabel='Valor F.O',title='F.O vs Capacidad de Producción')
 plt.grid()
 
 #Mostrar gráfica
